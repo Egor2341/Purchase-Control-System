@@ -26,9 +26,8 @@ public class Product {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal price;
 
-    @ManyToOne
-    @JoinColumn(name="user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private boolean countable = true;
 
     @OneToMany(mappedBy="product")
     private Set<Receipt> receipts;

@@ -28,7 +28,7 @@ public class Receipt {
     private Product product;
 
     @Column
-    private int count = 1;
+    private float count = 1.0f;
 
     @Column(nullable=false, precision=19, scale=2)
     private BigDecimal price;
