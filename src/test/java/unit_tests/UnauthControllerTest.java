@@ -2,21 +2,27 @@ package unit_tests;
 
 import com.example.purchases.controllers.UnauthController;
 import com.example.purchases.entities.User;
+import com.example.purchases.responses.Response;
 import com.example.purchases.servicies.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import static org.mockito.Mockito.verify;
 
-import java.util.Locale;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @ExtendWith(MockitoExtension.class)
 public class UnauthControllerTest {
@@ -26,6 +32,7 @@ public class UnauthControllerTest {
 
     @InjectMocks
     UnauthController controller;
+
 
     @Test
     void registration_DataIsValid_ReturnsValidResponseEntity() {
@@ -38,10 +45,10 @@ public class UnauthControllerTest {
         user.setPassword(password);
         user.setEmail(email);
 
-        // when
-        ResponseEntity<?> responseEntity = this.controller.registration(user);
+//         when
+        ResponseEntity<Response> responseEntity = this.controller.registration(user);
 
-        // then
+//         then
         assertNotNull(responseEntity);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         verify(this.userService).saveUser(user);
