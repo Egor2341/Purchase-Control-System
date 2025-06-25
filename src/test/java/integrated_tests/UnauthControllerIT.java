@@ -38,8 +38,36 @@ public class UnauthControllerIT {
         // when
         this.mockMvc.perform(requestBuilder)
                 // then
-                .andExpectAll(
+                .andExpect(
                         status().isCreated()
+                );
+    }
+
+    @Test
+    void registration_EmailIsInvalid_ReturnsValidResponseEntity() throws Exception {
+        // given
+        var requestBuilder = post("/unauth/registration")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "username": "User",
+                            "password": "pass1234",
+                            "email": "user"
+                        }
+                        """);
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().json(
+                                """
+                                        {
+                                            "message": "Invalid request content."
+                                        }
+                                        """
+                        )
                 );
     }
 }

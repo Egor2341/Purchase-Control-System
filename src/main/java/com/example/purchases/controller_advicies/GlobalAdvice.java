@@ -13,7 +13,7 @@ public class GlobalAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response> validException(MethodArgumentNotValidException e) {
-        Response response = new Response(e.getMessage());
+        Response response = new Response(e.getBody().getDetail());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
  }
