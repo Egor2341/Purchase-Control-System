@@ -1,7 +1,7 @@
 package com.example.purchases.servicies;
 
 import com.example.purchases.entities.User;
-import com.example.purchases.exceptions.UserAlreadyExistException;
+import com.example.purchases.exceptions.AlreadyExistException;
 import com.example.purchases.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,14 +22,10 @@ public class UserService {
     }
 
     public void saveUser(User user) {
-        if (user == null) {
-            throw new IllegalStateException("User can not be null") ;
-        }
-
         Optional<User> userFromDB = userRepository.findByUsername(user.getUsername());
 
         if (userFromDB.isPresent()) {
-            throw new UserAlreadyExistException("User already exist");
+            throw new AlreadyExistException("User already exist");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));

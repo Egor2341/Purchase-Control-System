@@ -1,6 +1,7 @@
 package com.example.purchases.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,10 +22,12 @@ public class Purchase {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
+    @NotNull
     @Column(nullable=false)
     @Temporal(TemporalType.DATE)
     private Date date;
 
+    @NotNull
     @Column(nullable=false, precision = 19, scale = 2)
     private BigDecimal total;
 
