@@ -38,4 +38,8 @@ public class GroupService {
 
         groupRepository.save(group);
     }
+
+    public Set<Group> findGroupsByUser(String username) {
+        return userRepository.findByUsername(username).get().getUserGroups();
+    }
 }

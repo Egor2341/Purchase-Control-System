@@ -1,20 +1,18 @@
 package com.example.purchases.controllers;
 
+import com.example.purchases.dto.mapper.GroupMapper;
 import com.example.purchases.entities.Group;
 import com.example.purchases.exceptions.AlreadyExistException;
 import com.example.purchases.responses.Response;
 import com.example.purchases.security.AuthUserDetails;
 import com.example.purchases.servicies.GroupService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/groups/")
@@ -22,9 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupController {
 
     private final GroupService service;
+    private final GroupMapper groupMapper;
 
-    public GroupController(GroupService service) {
+    @Autowired
+    public GroupController(GroupService service, GroupMapper groupMapper) {
         this.service = service;
+        this.groupMapper = groupMapper;
     }
 
     @PostMapping("/add")
@@ -39,5 +40,13 @@ public class GroupController {
         }
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllGroups(@AuthenticationPrincipal AuthUserDetails userDetails) {
+        return new ResponseEntity<>(
+                service.findGroupsByUser(userDetails.getUsername())
+                        .stream().map(groupMapper::toDTO).toList(),
+                HttpStatus.OK);
     }
 }
