@@ -11,8 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.MediaType;
 
-import java.util.HashSet;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -143,5 +141,43 @@ public class GroupControllerIT {
         this.mockMvc.perform(requestBuilder)
                 // then
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void addUser_UserAlreadyInGroup_ReturnsValidResponseEntity() throws Exception {
+        // given
+        var requestBuilder = post("/groups/add_user")
+                .with(httpBasic("user", "pass1234"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "id_group": "1",
+                            "username": "user"
+                        }
+                        """);
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addUser_UserIsNotAuthorGroup_ReturnsValidResponseEntity() throws Exception {
+        // given
+        var requestBuilder = post("/groups/add_user")
+                .with(httpBasic("user", "pass1234"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "id_group": "3",
+                            "username": "user3"
+                        }
+                        """);
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andExpect(status().isForbidden());
     }
 }
