@@ -26,6 +26,10 @@ public class Group {
     @Column(length = 64, nullable = false)
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name="author", nullable = false)
+    private User author;
+
     @ManyToMany(mappedBy = "userGroups")
     Set<User> users;
 }

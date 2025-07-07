@@ -3,6 +3,9 @@ package com.example.purchases.controllers;
 import com.example.purchases.dto.mapper.GroupMapper;
 import com.example.purchases.entities.Group;
 import com.example.purchases.exceptions.AlreadyExistException;
+import com.example.purchases.exceptions.DoesNotExistException;
+import com.example.purchases.exceptions.ForbiddenException;
+import com.example.purchases.requests.AddUser;
 import com.example.purchases.responses.Response;
 import com.example.purchases.security.AuthUserDetails;
 import com.example.purchases.servicies.GroupService;
@@ -48,5 +51,29 @@ public class GroupController {
                 service.findGroupsByUser(userDetails.getUsername())
                         .stream().map(groupMapper::toDTO).toList(),
                 HttpStatus.OK);
+    }
+
+
+    @GetMapping("created")
+    public ResponseEntity<?> getCreatedGroups(@AuthenticationPrincipal AuthUserDetails userDetails) {
+        return new ResponseEntity<>(
+                service.findCreatedGroups(userDetails.getUsername())
+                        .stream().map(groupMapper::toDTO).toList(),
+                HttpStatus.OK);
+    }
+
+    @PostMapping("add_user")
+    public ResponseEntity<Response> addUser(@RequestBody @Valid AddUser user,
+                                            @AuthenticationPrincipal AuthUserDetails userDetails) {
+        try {
+            service.addUser(userDetails.getUsername(), user.getUsername(), user.getId_group());
+        } catch (DoesNotExistException | AlreadyExistException e) {
+            return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (ForbiddenException e) {
+            return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -58,11 +58,14 @@ public class GroupControllerTest {
     void getAllGroups_ReturnsValidResponseEntity() {
         // given
 
-        Group group1 = new Group(1L, "Group1", new HashSet<>());
-        Group group2 = new Group(2L, "Group2", new HashSet<>());
+        User userObj = new User(1L, "user", "password", "user@example.com", new HashSet<>(),
+                new HashSet<>(), new HashSet<>(), new HashSet<>());
 
-        User userObj = new User(1L, "user", "password", "user@example.com", Set.of(group1, group2),
-                new HashSet<>(), new HashSet<>());
+        Group group1 = new Group(1L, "Group1", userObj, new HashSet<>());
+        Group group2 = new Group(2L, "Group2", userObj, new HashSet<>());
+
+        userObj.setCreatedGroups(Set.of(group1, group2));
+        userObj.setUserGroups(Set.of(group1, group2));
 
         group1.getUsers().add(userObj);
         group2.getUsers().add(userObj);

@@ -51,4 +51,7 @@ public class User {
 
     @OneToMany(mappedBy="user", cascade=CascadeType.ALL)
     private Set<UserPurchase> userPurchases;
+
+    @OneToMany(mappedBy="author", cascade=CascadeType.ALL)
+    private Set<Group> createdGroups;
 }
