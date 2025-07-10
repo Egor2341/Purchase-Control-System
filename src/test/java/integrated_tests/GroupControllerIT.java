@@ -11,8 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.MediaType;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
@@ -32,7 +31,7 @@ public class GroupControllerIT {
     @Test
     void addGroup_DataIsValid_ReturnsValidResponseEntity() throws Exception{
         // given
-        var requestBuilder = post("/groups/add")
+        var requestBuilder = post("/groups/")
                 .with(httpBasic("user", "pass1234"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -51,7 +50,7 @@ public class GroupControllerIT {
     @Test
     void addGroup_DataIsInvalid_ReturnsValidResponseEntity() throws Exception {
         // given
-        var requestBuilder = post("/groups/add")
+        var requestBuilder = post("/groups/")
                 .with(httpBasic("user", "pass1234"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -179,5 +178,24 @@ public class GroupControllerIT {
         this.mockMvc.perform(requestBuilder)
                 // then
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void deleteUser_DataIsValid_ReturnsValidResponseEntity() throws Exception {
+        // given
+        var requestBuilder = delete("/groups/delete_user")
+                .with(httpBasic("user", "pass1234"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "id_group": "1",
+                            "username": "user4"
+                        }
+                        """);
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andExpect(status().isOk());
     }
 }

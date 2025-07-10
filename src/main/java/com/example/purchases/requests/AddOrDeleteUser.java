@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class AddUser {
+public class AddOrDeleteUser {
 
     @NotNull
     private final Long id_group;

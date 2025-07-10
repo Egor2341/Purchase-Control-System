@@ -5,7 +5,7 @@ import com.example.purchases.entities.Group;
 import com.example.purchases.exceptions.AlreadyExistException;
 import com.example.purchases.exceptions.DoesNotExistException;
 import com.example.purchases.exceptions.ForbiddenException;
-import com.example.purchases.requests.AddUser;
+import com.example.purchases.requests.AddOrDeleteUser;
 import com.example.purchases.responses.Response;
 import com.example.purchases.security.AuthUserDetails;
 import com.example.purchases.servicies.GroupService;
@@ -31,7 +31,7 @@ public class GroupController {
         this.groupMapper = groupMapper;
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Response> addGroup(@RequestBody @Valid Group group,
                                              @AuthenticationPrincipal AuthUserDetails userDetails) {
         try {
@@ -63,11 +63,26 @@ public class GroupController {
     }
 
     @PostMapping("add_user")
-    public ResponseEntity<Response> addUser(@RequestBody @Valid AddUser user,
+    public ResponseEntity<Response> addUser(@RequestBody @Valid AddOrDeleteUser user,
                                             @AuthenticationPrincipal AuthUserDetails userDetails) {
         try {
             service.addUser(userDetails.getUsername(), user.getUsername(), user.getId_group());
         } catch (DoesNotExistException | AlreadyExistException e) {
+            return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (ForbiddenException e) {
+            return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete_user")
+    public ResponseEntity<Response> deleteUser(@RequestBody @Valid AddOrDeleteUser user,
+                                               @AuthenticationPrincipal AuthUserDetails userDetails) {
+        try {
+            service.deleteUser(userDetails.getUsername(), user.getUsername(), user.getId_group());
+        } catch (DoesNotExistException e) {
             return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (ForbiddenException e) {
             return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.FORBIDDEN);

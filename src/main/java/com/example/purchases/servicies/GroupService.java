@@ -10,6 +10,7 @@ import com.example.purchases.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,13 +26,12 @@ public class GroupService {
     }
 
     public void saveGroup(Group group, String username) {
-        Optional<Group> groupFromDB = groupRepository.findByName(group.getName());
 
-        if (groupFromDB.isPresent()) {
+        User user = userRepository.findByUsername(username).get(); // if user can login, he is in database
+        if (user.getUserGroups().stream().anyMatch(g -> g.getName().equals(group.getName()))) {
             throw new AlreadyExistException("Group with this name already exists");
         }
 
-        User user = userRepository.findByUsername(username).get(); // if user can login, he is in database
         user.getUserGroups().add(group);
         user.getCreatedGroups().add(group);
 
@@ -57,16 +57,36 @@ public class GroupService {
             throw new DoesNotExistException("Group with this ID does not exist");
         }
         User author = userRepository.findByUsername(authorName).get();
-        if (!author.getCreatedGroups().contains(group.get())) {
+        if (!isAvailable(author,group.get())) {
             throw new ForbiddenException("User is not author of this group");
         }
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isEmpty()) {
-            throw new DoesNotExistException("User with this ID does not exist");
+            throw new DoesNotExistException("User with this username does not exist");
         }
         if (user.get().getUserGroups().contains(group.get())) {
             throw new AlreadyExistException("User is already in this group");
         }
         user.get().getUserGroups().add(group.get());
+    }
+
+    public void deleteUser(String authorName, String username, Long id) {
+        Optional<Group> group = groupRepository.findById(id);
+        if (group.isEmpty()) {
+            throw new DoesNotExistException("Group with this ID does not exist");
+        }
+        if (!isAvailable(userRepository.findByUsername(authorName).get(), group.get())) {
+            throw new ForbiddenException("User is not author of this group");
+        }
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isEmpty()) {
+            throw new DoesNotExistException("User with this username does not exist");
+        }
+        user.get().getUserGroups().remove(group.get());
+        group.get().getUsers().remove(user.get());
+    }
+
+    private boolean isAvailable (User user, Group group) {
+        return user.getCreatedGroups().contains(group);
     }
 }
