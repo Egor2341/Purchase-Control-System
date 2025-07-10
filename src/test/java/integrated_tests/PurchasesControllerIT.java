@@ -40,4 +40,21 @@ public class PurchasesControllerIT {
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    void addPurchase_DataIsInvalid_ReturnsValidResponseEntity() throws Exception {
+        //given
+        var requestBuilder = post("/purchases/")
+                .with(httpBasic("user", "pass1234"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                            {
+                                "date": "2025-07-10T19:21:00",
+                                "total": 1560.22
+                            }
+                        """);
+        //when
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest());
+    }
 }

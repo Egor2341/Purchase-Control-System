@@ -20,7 +20,7 @@ import java.util.Set;
 @Table(name="purchases")
 public class Purchase {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
