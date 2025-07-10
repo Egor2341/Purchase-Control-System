@@ -11,8 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.MediaType;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
 
@@ -24,9 +24,6 @@ public class GroupControllerIT {
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    GroupService groupService;
 
     @Test
     void addGroup_DataIsValid_ReturnsValidResponseEntity() throws Exception{

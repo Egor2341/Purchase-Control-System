@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -24,8 +25,7 @@ public class Purchase {
 
     @NotNull
     @Column(nullable=false)
-    @Temporal(TemporalType.DATE)
-    private Date date;
+    private LocalDateTime date;
 
     @NotNull
     @Column(nullable=false, precision = 19, scale = 2)
